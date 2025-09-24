@@ -117,9 +117,65 @@ def handel_null ( data : pd.DataFrame ,column:str  ,use: str = ""  ) -> pd.DataF
     Returns:
         pd.DataFrame: The DataFrame after applying the chosen strategy.
     """
-    if (nna(data[column])>0 and use  == 'fill_mode') :
-        mod=most_popular_val(data[column],1)[0]
-        data[column].fillna(mod)
+    cleaned_data=data.copy()
 
-    elif (nna(data[column])>0 and use  == 'drop'):
-        
+    if nna(data[column])==0:
+        print("your data hasn't any null values")
+        return cleaned_data
+    
+    if use  == 'fill_mode' :
+        mod=most_popular_val(data[column],1)[0]
+        cleaned_data[column]=data[column].fillna(mod)
+
+    elif  use  == 'drop':
+        index=indx_na(data[column])
+        cleaned_data=data.drop(index,axis=0)
+
+    elif use== 'fill_mean':
+        mean=data[column].mean()
+        cleaned_data[column]=data[column].fillna(mean)
+
+    elif use== 'fill_median':
+        median=data[column].median()
+        cleaned_data[column]=data[column].fillna(median)       
+    
+    return cleaned_data
+
+def change_index(data:pd.DataFrame,col:str) -> pd.DataFrame:
+
+    '''
+        Thins function if you want to change your index with any column in data
+        Args:
+            data (pd.DataFrame): a data that you want to change its index
+            col:(str): a name of column that you want to make it your index
+        Return:
+            pd.DataFrame: a data after changing index
+    '''
+    data=data.set_index(col)
+    return data
+
+def nduplicate(data :pd.DataFrame) -> int:
+    '''
+        This function to calculate the number of duplicated rows
+        Args:
+            data(pd.DataFrame):a data that may have a duplicated values
+        Return:
+            int: a number of duplicated rows    
+    '''
+    n=data.duplicated.sum()
+    return n
+
+def indx_duplicate(data :pd.DataFrame)->list:
+    '''
+        this function to get indecies of duplicated row
+        Argse:
+            data(pd.DataFrame): a data that has duplicated rows
+        Returns:
+            list: list has the indcies of duplicated row    
+    '''
+    mask_duple=data.duplicated()
+    indx=mask_duple[mask_duple>1].index.tolist()
+    return indx
+
+def handel_duplicate(data:pd.DataFrame,use :str="")->pd.DataFrame:
+
