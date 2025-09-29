@@ -178,4 +178,22 @@ def indx_duplicate(data :pd.DataFrame)->list:
     return indx
 
 def handel_duplicate(data:pd.DataFrame,use :str="")->pd.DataFrame:
+    """
+    Handle duplicate rows in a pandas DataFrame according to the given strategy.
 
+    Args:
+        data (pd.DataFrame): The input DataFrame to process.
+        use (str): The strategy to handle duplicates. Options:
+                   - "drop_all": drop duplicate rows (keep the first occurrence).
+                   - "drop_keep_last": drop duplicates but keep the last occurrence.
+                   - "drop_keep_first": drop duplicates but keep the first occurrence.
+    Return:
+        pd.DataFrame:data after handel nulls
+    """
+    if use =="drop_all":
+        cleaned= data.drop_duplicates(keep=False)
+    elif use == "drop_keep_last":
+        cleaned= data.drop_duplicates(keep="last")
+    elif use == "drop_keep_first":
+        cleaned= data.drop_duplicates(keep="first")
+    return cleaned
